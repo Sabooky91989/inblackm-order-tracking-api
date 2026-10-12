@@ -850,7 +850,8 @@
             <div class="action-row">
               <button class="btn btn-primary" onclick="testBotClaim()">1. Bot Claim ออเดอร์</button>
               <button class="btn btn-outline" onclick="testBotHeartbeat()">2. ส่ง Heartbeat</button>
-              <button class="btn btn-danger" onclick="triggerRecoveryCycle()">3. ตรวจจับ Bot ล่ม</button>
+              <button class="btn btn-success" onclick="testBotComplete()">3. Bot เติมสำเร็จ (Complete)</button>
+              <button class="btn btn-danger" onclick="triggerRecoveryCycle()">4. ตรวจจับ Bot ล่ม</button>
             </div>
           </div>
 
@@ -1539,10 +1540,11 @@
     }
 
     async function testBotHeartbeat() {
+      const botId = currentOrderData?.locked_by || 'BOT-ALPHA-01';
       const res = await fetch(`/bot/orders/${activeOrderNo}/heartbeat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ botId: 'BOT-ALPHA-01' })
+        body: JSON.stringify({ botId: botId })
       });
       const data = await res.json();
       if (data.success) {
@@ -1550,6 +1552,30 @@
         lookupOrder();
       } else {
         showToast('ไม่สามารถต่ออายุได้', data.error.message, 'danger');
+      }
+    }
+
+    async function testBotComplete() {
+      const botId = currentOrderData?.locked_by || 'BOT-ALPHA-01';
+      const res = await fetch(`/bot/orders/${activeOrderNo}/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          botId: botId,
+          metadata: { providerTx: 'TX-PROV-' + Date.now(), speedMs: 1450 }
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showSimResult(
+          'Bot เติมเกมสำเร็จเรียบร้อย (COMPLETED)',
+          `ออเดอร์ ${activeOrderNo} ได้รับการเติมเกมสำเร็จเรียบร้อยแล้ว สถานะเปลี่ยนเป็น COMPLETED และปลดล็อค Lease คืนระบบ`,
+          `กลไก Complete: บันทึกความสำเร็จลง Audit Timeline, ปลดล็อค locked_by = NULL, และย้ายออเดอร์ไปหมวดประวัติ (History)`
+        );
+        lookupOrder();
+        fetchOrders();
+      } else {
+        showToast('ไม่สามารถจบงานได้', data.error.message, 'danger');
       }
     }
 
