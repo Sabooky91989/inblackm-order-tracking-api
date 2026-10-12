@@ -940,9 +940,14 @@
 
           <!-- Step 2: Player UID -->
           <div class="form-group">
-            <label class="form-label">2. ระบุ Player UID / OpenID ของผู้เล่น</label>
-            <input type="text" id="storePlayerUid" placeholder="เช่น 984512398" value="984512398">
-            <span class="form-hint">กรุณาระบุ UID ให้ถูกต้องเพื่อให้ Bot สามารถเติมเข้าไอดีได้ทันที</span>
+            <label class="form-label">2. ระบุ Player UID ของผู้เล่น (เฉพาะตัวเลข)</label>
+            <input type="text" id="storePlayerUid" inputmode="numeric" pattern="[0-9]*"
+              onkeydown="if(!/[0-9]/.test(event.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Enter','Home','End'].includes(event.key) && !event.ctrlKey && !event.metaKey){event.preventDefault();}"
+              onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 0"
+              onpaste="setTimeout(() => { this.value = this.value.replace(/[^0-9]/g, ''); }, 0)"
+              oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+              placeholder="เช่น 984512398" value="984512398">
+            <span class="form-hint" style="color:#A5B4FC;">⚠️ กรอกเฉพาะตัวเลขเท่านั้น (ระบบบล็อกตัวอักษรและอักขระพิเศษอัตโนมัติ)</span>
           </div>
 
           <!-- Step 3: Choose Package -->
@@ -1044,7 +1049,7 @@
 
         <!-- Search Bar -->
         <div class="search-bar">
-          <input type="text" id="trackerSearchInput" placeholder="กรอกเลขออเดอร์ เช่น ORD-2587965432159-458" value="ORD-2587965432159-458">
+          <input type="text" id="trackerSearchInput" placeholder="กรอกเลขออเดอร์ เช่น ORD-2587965432159-458 หรือเฉพาะตัวเลข" value="ORD-2587965432159-458" onkeydown="if(event.key === 'Enter') lookupTrackerOrder()">
           <button class="btn btn-primary" onclick="lookupTrackerOrder()">ค้นหาออเดอร์</button>
         </div>
 
@@ -1297,8 +1302,14 @@
           <input type="text" id="retryUidOld" readonly style="color:var(--danger);">
         </div>
         <div class="form-group">
-          <label class="form-label">Player UID ใหม่ที่ถูกต้อง</label>
-          <input type="text" id="retryUidInput" placeholder="กรอก UID ใหม่ที่ถูกต้อง">
+          <label class="form-label">Player UID ใหม่ที่ถูกต้อง (เฉพาะตัวเลข)</label>
+          <input type="text" id="retryUidInput" inputmode="numeric" pattern="[0-9]*"
+            onkeydown="if(!/[0-9]/.test(event.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Enter','Home','End'].includes(event.key) && !event.ctrlKey && !event.metaKey){event.preventDefault();}"
+            onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 0"
+            onpaste="setTimeout(() => { this.value = this.value.replace(/[^0-9]/g, ''); }, 0)"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            placeholder="กรอกเฉพาะตัวเลข เช่น 800123999">
+          <span class="form-hint" style="color:#A5B4FC;">⚠️ กรอกเฉพาะตัวเลขเท่านั้น (ระบบบล็อกตัวอักษรและอักขระพิเศษอัตโนมัติ)</span>
         </div>
       </div>
       <div class="modal-footer">
@@ -1556,6 +1567,10 @@
         showToast('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุ Player UID ของผู้เล่น', 'warning');
         return;
       }
+      if (!/^\d+$/.test(uid)) {
+        showToast('ข้อมูลไม่ถูกต้อง', 'Player UID ต้องเป็นตัวเลขเท่านั้น (ห้ามใส่ตัวอักษรหรืออักขระพิเศษ)', 'warning');
+        return;
+      }
 
       const btn = document.getElementById('btnSubmitOrder');
       btn.innerText = 'กำลังสร้างคำสั่งซื้อ...';
@@ -1631,8 +1646,12 @@
     // TRACKER PAGE LOGIC
     // ==========================================
     async function lookupTrackerOrder() {
-      const orderNo = document.getElementById('trackerSearchInput').value.trim();
+      let orderNo = document.getElementById('trackerSearchInput').value.trim();
       if (!orderNo) return;
+      if (/^\d/.test(orderNo) && !orderNo.startsWith('ORD-')) {
+        orderNo = 'ORD-' + orderNo;
+        document.getElementById('trackerSearchInput').value = orderNo;
+      }
       activeOrderNo = orderNo;
 
       try {
@@ -1795,6 +1814,10 @@
       const newUid = document.getElementById('retryUidInput').value.trim();
       if (!newUid) {
         showToast('กรุณากรอกข้อมูล', 'ระบุ Player UID ใหม่ให้ถูกต้อง', 'warning');
+        return;
+      }
+      if (!/^\d+$/.test(newUid)) {
+        showToast('ข้อมูลไม่ถูกต้อง', 'Player UID ต้องเป็นตัวเลขเท่านั้น (ห้ามใส่ตัวอักษรหรืออักขระพิเศษ)', 'warning');
         return;
       }
 
