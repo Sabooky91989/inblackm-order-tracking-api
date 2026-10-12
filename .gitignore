@@ -9,5 +9,6 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Independent project folder with its own git repository
+# Independent project folders with their own git repositories
 aniimo-topup-api/
+oxide-monitor-candidate-pack/
