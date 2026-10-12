@@ -3,17 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Tracking & Problem Resolution System - InblackM</title>
+  <title>InblackM - Game Top-up Order Tracking & Self-Healing Engine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-base: #0B0F19;
-      --bg-card: rgba(18, 24, 38, 0.7);
-      --bg-card-hover: rgba(26, 34, 52, 0.85);
+      --bg-card: rgba(18, 24, 38, 0.75);
+      --bg-card-hover: rgba(26, 34, 52, 0.9);
+      --bg-surface: #151C2C;
+      --bg-input: #0E1422;
       --border-color: rgba(255, 255, 255, 0.08);
-      --border-accent: rgba(99, 102, 241, 0.3);
+      --border-accent: rgba(99, 102, 241, 0.35);
+      --border-focus: #6366F1;
       --primary: #6366F1;
       --primary-hover: #4F46E5;
       --primary-glow: rgba(99, 102, 241, 0.25);
@@ -31,8 +34,7 @@
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 18px;
-      --font-en: 'Plus Jakarta Sans', sans-serif;
-      --font-th: 'Prompt', sans-serif;
+      --font-main: 'Plus Jakarta Sans', 'Prompt', sans-serif;
     }
 
     * {
@@ -44,14 +46,14 @@
     body {
       background-color: var(--bg-base);
       background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.1) 0px, transparent 50%),
-        radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 45%),
+        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 45%),
+        radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
       color: var(--text-main);
-      font-family: var(--font-en), var(--font-th);
+      font-family: var(--font-main);
       min-height: 100vh;
       line-height: 1.6;
-      padding: 24px 20px;
+      padding: 24px 20px 48px;
     }
 
     .container {
@@ -73,27 +75,27 @@
     .logo-badge {
       display: inline-flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
     .brand-icon {
-      width: 44px;
-      height: 44px;
+      width: 46px;
+      height: 46px;
       border-radius: var(--radius-md);
       background: linear-gradient(135deg, #6366F1, #8B5CF6);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 20px;
-      box-shadow: 0 0 20px var(--primary-glow);
+      font-size: 22px;
+      box-shadow: 0 0 24px var(--primary-glow);
     }
 
     .brand-title h1 {
       font-size: 22px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #FFFFFF, #CBD5E1);
+      background: linear-gradient(135deg, #FFFFFF 30%, #CBD5E1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -106,8 +108,8 @@
     .system-status {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
+      gap: 10px;
+      padding: 8px 16px;
       border-radius: 9999px;
       background: rgba(16, 185, 129, 0.1);
       border: 1px solid rgba(16, 185, 129, 0.3);
@@ -133,7 +135,7 @@
     /* Grid Layout */
     .dashboard-grid {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: 24px;
     }
 
@@ -184,7 +186,7 @@
 
     .tab-btn {
       flex: 1;
-      padding: 8px 14px;
+      padding: 9px 14px;
       border: none;
       background: transparent;
       color: var(--text-muted);
@@ -210,7 +212,7 @@
 
     input, select, textarea {
       width: 100%;
-      background: rgba(15, 23, 42, 0.7);
+      background: var(--bg-input);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
       padding: 10px 14px;
@@ -222,7 +224,7 @@
     }
 
     input:focus, select:focus, textarea:focus {
-      border-color: var(--primary);
+      border-color: var(--border-focus);
       box-shadow: 0 0 0 3px var(--primary-glow);
     }
 
@@ -264,30 +266,30 @@
     }
 
     .btn-success {
-      background: rgba(16, 185, 129, 0.2);
-      border: 1px solid rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
       color: #34D399;
     }
     .btn-success:hover {
-      background: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.25);
     }
 
     .btn-danger {
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
       color: #F87171;
     }
     .btn-danger:hover {
-      background: rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.25);
     }
 
     .btn-warning {
-      background: rgba(245, 158, 11, 0.2);
-      border: 1px solid rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
       color: #FBBF24;
     }
     .btn-warning:hover {
-      background: rgba(245, 158, 11, 0.3);
+      background: rgba(245, 158, 11, 0.25);
     }
 
     /* Badges */
@@ -341,7 +343,7 @@
     }
 
     tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.03);
       cursor: pointer;
     }
 
@@ -356,7 +358,7 @@
     .stepper::before {
       content: '';
       position: absolute;
-      top: 15px;
+      top: 16px;
       left: 30px;
       right: 30px;
       height: 2px;
@@ -375,8 +377,8 @@
     }
 
     .step-circle {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       background: var(--bg-card);
       border: 2px solid var(--text-dim);
@@ -393,7 +395,7 @@
       border-color: var(--primary);
       background: var(--primary);
       color: #fff;
-      box-shadow: 0 0 15px var(--primary-glow);
+      box-shadow: 0 0 16px var(--primary-glow);
     }
 
     .step.done .step-circle {
@@ -409,7 +411,7 @@
     }
 
     .step-label {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--text-muted);
       text-align: center;
@@ -420,13 +422,16 @@
       position: relative;
       padding-left: 24px;
       margin-top: 20px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 8px;
     }
 
     .timeline::before {
       content: '';
       position: absolute;
-      top: 6px;
-      bottom: 6px;
+      top: 8px;
+      bottom: 8px;
       left: 7px;
       width: 2px;
       background: var(--border-color);
@@ -434,13 +439,13 @@
 
     .timeline-item {
       position: relative;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .timeline-dot {
       position: absolute;
       left: -24px;
-      top: 4px;
+      top: 5px;
       width: 16px;
       height: 16px;
       border-radius: 50%;
@@ -449,7 +454,7 @@
     }
 
     .timeline-content {
-      background: rgba(15, 23, 42, 0.4);
+      background: rgba(15, 23, 42, 0.45);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       padding: 12px 16px;
@@ -476,14 +481,14 @@
       font-size: 11px;
       padding: 2px 8px;
       border-radius: 4px;
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--text-muted);
       font-weight: 600;
     }
 
     /* Test Cases Simulator Box */
     .test-box {
-      background: rgba(99, 102, 241, 0.05);
+      background: rgba(99, 102, 241, 0.04);
       border: 1px solid var(--border-accent);
       border-radius: var(--radius-md);
       padding: 16px;
@@ -504,6 +509,7 @@
       font-size: 12px;
       color: var(--text-muted);
       margin-bottom: 12px;
+      line-height: 1.5;
     }
 
     .action-row {
@@ -521,8 +527,8 @@
     }
 
     .info-item {
-      background: rgba(15, 23, 42, 0.4);
-      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.45);
+      padding: 12px 16px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-color);
     }
@@ -541,23 +547,189 @@
       margin-top: 2px;
     }
 
-    .toast {
+    /* ========================================================= */
+    /* Custom Modal System (No Browser Prompt / Alert!)          */
+    /* ========================================================= */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 15, 0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(99, 102, 241, 0.15);
+      transform: scale(0.95) translateY(10px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 20px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .modal-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .form-hint {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 16px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .notice-box {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .notice-info {
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: #67E8F9;
+    }
+
+    .notice-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #FCD34D;
+    }
+
+    .notice-danger {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #FCA5A5;
+    }
+
+    /* Toast Notification */
+    .toast-container {
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background: rgba(18, 24, 38, 0.95);
-      border: 1px solid var(--border-color);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast-item {
+      pointer-events: auto;
+      background: #151D2F;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
       padding: 14px 20px;
       border-radius: var(--radius-md);
       font-size: 13px;
-      font-weight: 600;
-      z-index: 1000;
-      display: none;
-      animation: slideIn 0.3s forwards;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 420px;
+      animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    @keyframes slideIn {
+    .toast-icon {
+      font-size: 18px;
+    }
+
+    .toast-text {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .toast-msg {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    @keyframes toastSlideIn {
       from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
@@ -569,13 +741,13 @@
       <div class="logo-badge">
         <div class="brand-icon">⚡</div>
         <div class="brand-title">
-          <h1>Order Tracking & Self-Healing API</h1>
+          <h1>Order Tracking & Self-Healing Engine</h1>
           <p>ระบบติดตามออเดอร์ร้านเติมเกมและการจัดการเคสปัญหาอัตโนมัติ (InblackM)</p>
         </div>
       </div>
       <div class="system-status">
         <div class="status-pulse"></div>
-        <span>SYSTEM ONLINE (PostgreSQL Connected)</span>
+        <span>SYSTEM ONLINE (PostgreSQL 16 Connected)</span>
       </div>
     </header>
 
@@ -586,7 +758,7 @@
           <div class="card-title">
             <span>🔍 ค้นหาและติดตามออเดอร์</span>
           </div>
-          <button class="btn btn-outline" onclick="openNewOrderModal()">+ สร้างออเดอร์ใหม่</button>
+          <button class="btn btn-primary" onclick="openCreateOrderModal()">+ สร้างออเดอร์ใหม่</button>
         </div>
 
         <div class="search-bar">
@@ -644,7 +816,7 @@
             <button class="btn btn-success" id="payOrderBtn" onclick="actionPayOrder()">💳 ชำระเงิน (จำลองจ่าย)</button>
             <button class="btn btn-warning" id="reportIssueBtn" onclick="openReportIssueModal()">⚠️ แจ้งปัญหา</button>
             <button class="btn btn-outline" id="retryUidBtn" onclick="openRetryUidModal()">✏️ แก้ไข UID แล้วลองใหม่</button>
-            <button class="btn btn-danger" id="refundOrderBtn" onclick="actionRefundOrder()">💸 ขอคืนเงิน</button>
+            <button class="btn btn-danger" id="refundOrderBtn" onclick="openRefundModal()">💸 ขอคืนเงิน</button>
           </div>
 
           <!-- Timeline -->
@@ -748,19 +920,283 @@
     </div>
   </div>
 
-  <div class="toast" id="toastBox">Notification</div>
+  <!-- ========================================================= -->
+  <!-- MODAL 1: Create Order Modal                               -->
+  <!-- ========================================================= -->
+  <div class="modal-overlay" id="createOrderModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🎮 สร้างคำสั่งซื้อใหม่ (Create Order)</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('createOrderModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">เลือกเกม</label>
+          <select id="newOrderGame" onchange="onGameChange()">
+            <option value="ROV">ROV (Realm of Valor)</option>
+            <option value="GENSHIN">Genshin Impact</option>
+            <option value="VALORANT">Valorant</option>
+            <option value="FREEFIRE">Free Fire</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">แพ็กเกจ</label>
+          <select id="newOrderPackage" onchange="onPackageChange()">
+            <option value="ROV-POINTS-500" data-amount="150">500 คูปอง (฿150.00)</option>
+            <option value="ROV-POINTS-1000" data-amount="300">1,000 คูปอง (฿300.00)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Player UID / ID ตัวละคร</label>
+          <input type="text" id="newOrderUid" placeholder="เช่น 984512398">
+          <span class="form-hint">กรุณาระบุ UID ของผู้เล่นให้ถูกต้อง</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Customer ID</label>
+          <input type="text" id="newOrderCustomerId" value="CUST-1001">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Idempotency-Key (ป้องกันการสร้างซ้ำ)</label>
+          <input type="text" id="newOrderIdempotencyKey" readonly style="color:var(--text-dim); font-size:12px;">
+          <span class="form-hint">ระบบสุ่ม Unique Key สำหรับ Request นี้โดยเฉพาะ</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('createOrderModal')">ยกเลิก</button>
+        <button class="btn btn-primary" id="submitCreateOrderBtn" onclick="submitCreateOrder()">ยืนยันสร้างออเดอร์</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 2: Retry UID Modal                                  -->
+  <!-- ========================================================= -->
+  <div class="modal-overlay" id="retryUidModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>✏️ แก้ไข Player UID แล้วส่งเข้าคิวใหม่</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('retryUidModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="notice-box notice-info">
+          💡 <strong>Self-Healing Mechanism</strong>: เมื่ออัปเดต UID แล้ว ระบบจะเคลียร์ Error และเปลี่ยนสถานะกลับเป็น <strong>QUEUED</strong> ให้ Bot ดึงไปทำรายการต่อทันที
+        </div>
+        <div class="form-group">
+          <label class="form-label">เลขออเดอร์</label>
+          <input type="text" id="retryUidOrderNo" readonly style="color:var(--text-dim);">
+        </div>
+        <div class="form-group">
+          <label class="form-label">UID เดิมที่ผิดพลาด</label>
+          <input type="text" id="retryUidOld" readonly style="color:var(--danger);">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Player UID ใหม่ที่ถูกต้อง</label>
+          <input type="text" id="retryUidInput" placeholder="กรอก UID ใหม่ที่ถูกต้อง">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('retryUidModal')">ยกเลิก</button>
+        <button class="btn btn-success" id="submitRetryUidBtn" onclick="submitRetryUid()">บันทึกและส่งเข้าคิว</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 3: Report Issue Modal                               -->
+  <!-- ========================================================= -->
+  <div class="modal-overlay" id="reportIssueModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>⚠️ แจ้งปัญหาออเดอร์ (Report Issue)</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('reportIssueModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="notice-box notice-warning">
+          ⚠️ <strong>หมายเหตุ</strong>: เมื่อแจ้งปัญหา ออเดอร์ที่กำลังดำเนินการจะถูกปรับสถานะเป็น <strong>DELAYED</strong> ชั่วคราวเพื่อรอเจ้าหน้าที่เข้าตรวจสอบ
+        </div>
+        <div class="form-group">
+          <label class="form-label">เลขออเดอร์</label>
+          <input type="text" id="reportIssueOrderNo" readonly style="color:var(--text-dim);">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ประเภทปัญหา</label>
+          <select id="reportIssueType">
+            <option value="TOP_UP_NOT_RECEIVED">ยังไม่ได้รับไอเทม / พอยต์ในเกม</option>
+            <option value="WRONG_PACKAGE">ได้รับไอเทมผิดแพ็กเกจ</option>
+            <option value="DOUBLE_CHARGE">ระบบตัดเงินซ้ำซ้อน</option>
+            <option value="GAME_MAINTENANCE">เซิร์ฟเวอร์เกมปิดปรับปรุง</option>
+            <option value="OTHER">ปัญหาอื่น ๆ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">รายละเอียดปัญหา</label>
+          <textarea id="reportIssueDesc" rows="3" placeholder="ระบุรายละเอียด เช่น ชำระเงินไปเมื่อ 15 นาทีก่อน แต่ยังไม่ได้รับคูปองในเกม"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('reportIssueModal')">ยกเลิก</button>
+        <button class="btn btn-warning" id="submitReportIssueBtn" onclick="submitReportIssue()">ส่งเรื่องแจ้งปัญหา</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 4: Refund Modal                                     -->
+  <!-- ========================================================= -->
+  <div class="modal-overlay" id="refundModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>💸 ดำเนินการขอคืนเงิน (Refund Order)</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('refundModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="notice-box notice-danger">
+          ⚠️ <strong>คำเตือน</strong>: การคืนเงินจะทำให้สถานะออเดอร์สิ้นสุดเป็น <strong>REFUNDED</strong> และไม่สามารถนำกลับมาทำรายการต่อได้
+        </div>
+        <div class="form-group">
+          <label class="form-label">เลขออเดอร์</label>
+          <input type="text" id="refundOrderNo" readonly style="color:var(--text-dim);">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ยอดเงินที่จะคืน</label>
+          <input type="text" id="refundAmountDisplay" readonly style="color:var(--purple); font-weight:700;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">เหตุผลในการคืนเงิน</label>
+          <input type="text" id="refundReasonInput" value="ลูกค้ายกเลิกรายการและขอคืนเงิน">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('refundModal')">ยกเลิก</button>
+        <button class="btn btn-danger" id="submitRefundBtn" onclick="submitRefund()">ยืนยันการคืนเงิน</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 5: Simulation Inspector Result Modal                -->
+  <!-- ========================================================= -->
+  <div class="modal-overlay" id="simResultModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="simResultTitle">
+          <span>⚡ ผลการทดสอบ Simulator</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('simResultModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="simResultBanner" class="notice-box notice-info">
+          รายละเอียดผลการทำงาน
+        </div>
+        <div class="form-group">
+          <label class="form-label">กลไกทางเทคนิคที่ทำงาน (Technical Mechanism)</label>
+          <div id="simResultDetail" style="background:var(--bg-input); padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-color); font-size:13px; line-height:1.6;">
+            -
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal('simResultModal')">เข้าใจแล้ว</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <script>
     let currentTab = 'current';
     let activeOrderNo = 'ORD-2587965432159-458';
+    let currentOrderData = null;
 
-    function showToast(message, color = 'var(--text-main)') {
-      const toast = document.getElementById('toastBox');
-      toast.innerText = message;
-      toast.style.borderColor = color;
-      toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    // Game package catalogue
+    const GAME_PACKAGES = {
+      ROV: [
+        { id: 'ROV-POINTS-500', name: '500 คูปอง (฿150.00)', amount: 150 },
+        { id: 'ROV-POINTS-1000', name: '1,000 คูปอง (฿300.00)', amount: 300 }
+      ],
+      GENSHIN: [
+        { id: 'GENSHIN-BLESSING', name: 'Blessing of Welkin Moon (฿179.00)', amount: 179 },
+        { id: 'GENSHIN-GENESIS-980', name: '980 Genesis Crystals (฿549.00)', amount: 549 }
+      ],
+      VALORANT: [
+        { id: 'VAL-VP-1000', name: '1,000 VP Points (฿300.00)', amount: 300 },
+        { id: 'VAL-VP-2050', name: '2,050 VP Points (฿600.00)', amount: 600 }
+      ],
+      FREEFIRE: [
+        { id: 'FF-DIAMOND-100', name: '100 Diamonds (฿35.00)', amount: 35 },
+        { id: 'FF-DIAMOND-520', name: '520 Diamonds (฿175.00)', amount: 175 }
+      ]
+    };
+
+    function showToast(title, message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast-item';
+
+      const icons = {
+        success: '✅',
+        warning: '⚠️',
+        danger: '❌',
+        info: 'ℹ️'
+      };
+
+      const colors = {
+        success: 'rgba(16, 185, 129, 0.4)',
+        warning: 'rgba(245, 158, 11, 0.4)',
+        danger: 'rgba(239, 68, 68, 0.4)',
+        info: 'rgba(99, 102, 241, 0.4)'
+      };
+
+      toast.style.borderColor = colors[type] || colors.info;
+      toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || icons.info}</span>
+        <div class="toast-text">
+          <div class="toast-title">${title}</div>
+          <div class="toast-msg">${message}</div>
+        </div>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
     }
+
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Close modal on escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+      }
+    });
+
+    // Close modal when clicking backdrop
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    });
 
     async function fetchOrders() {
       try {
@@ -818,16 +1254,17 @@
         const timelineData = await timelineRes.json();
 
         if (!orderData.success) {
-          showToast(`❌ ${orderData.error.message}`, 'var(--danger)');
+          showToast('ไม่พบข้อมูล', orderData.error.message, 'danger');
           return;
         }
 
+        currentOrderData = orderData.data;
         renderOrderDetail(orderData.data);
         if (timelineData.success) {
           renderTimeline(timelineData.data.timeline);
         }
       } catch (err) {
-        showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'var(--danger)');
+        showToast('ผิดพลาด', 'ไม่สามารถเชื่อมต่อกับ Server ได้', 'danger');
       }
     }
 
@@ -869,7 +1306,7 @@
     function renderTimeline(timeline) {
       const container = document.getElementById('timelineList');
       if (!timeline.length) {
-        container.innerHTML = '<p style="color:var(--text-dim);">ไม่มีประวัติ</p>';
+        container.innerHTML = '<p style="color:var(--text-dim); padding:10px;">ไม่มีประวัติ</p>';
         return;
       }
       container.innerHTML = timeline.map(item => `
@@ -890,7 +1327,180 @@
       `).join('');
     }
 
-    // Action handlers
+    // ==========================================
+    // Modal Actions (Create, Retry UID, Issue, Refund)
+    // ==========================================
+    function openCreateOrderModal() {
+      document.getElementById('newOrderIdempotencyKey').value = 'IDEM-' + Date.now() + '-' + Math.floor(100 + Math.random() * 900);
+      document.getElementById('newOrderUid').value = 'UID-' + Math.floor(100000 + Math.random() * 900000);
+      onGameChange();
+      openModal('createOrderModal');
+    }
+
+    function onGameChange() {
+      const game = document.getElementById('newOrderGame').value;
+      const packageSelect = document.getElementById('newOrderPackage');
+      const packages = GAME_PACKAGES[game] || [];
+      packageSelect.innerHTML = packages.map(p => `
+        <option value="${p.id}" data-amount="${p.amount}">${p.name}</option>
+      `).join('');
+    }
+
+    function onPackageChange() {}
+
+    async function submitCreateOrder() {
+      const btn = document.getElementById('submitCreateOrderBtn');
+      btn.innerText = 'กำลังสร้าง...';
+      btn.disabled = true;
+
+      try {
+        const gameId = document.getElementById('newOrderGame').value;
+        const packageSelect = document.getElementById('newOrderPackage');
+        const packageId = packageSelect.value;
+        const selectedOption = packageSelect.options[packageSelect.selectedIndex];
+        const amount = parseFloat(selectedOption.getAttribute('data-amount') || '150');
+        const playerUid = document.getElementById('newOrderUid').value.trim();
+        const customerId = document.getElementById('newOrderCustomerId').value.trim();
+        const idempotencyKey = document.getElementById('newOrderIdempotencyKey').value;
+
+        if (!playerUid) {
+          showToast('กรุณากรอกข้อมูล', 'ระบุ Player UID ให้ถูกต้อง', 'warning');
+          return;
+        }
+
+        const res = await fetch('/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Idempotency-Key': idempotencyKey
+          },
+          body: JSON.stringify({
+            customerId,
+            gameId,
+            packageId,
+            playerUid,
+            amount,
+            currency: 'THB'
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          closeModal('createOrderModal');
+          showToast('สร้างออเดอร์สำเร็จ', `เลขออเดอร์: ${data.data.order_no}`, 'success');
+          document.getElementById('orderSearchInput').value = data.data.order_no;
+          activeOrderNo = data.data.order_no;
+          await lookupOrder();
+          await fetchOrders();
+        } else {
+          showToast('สร้างออเดอร์ไม่สำเร็จ', data.error.message, 'danger');
+        }
+      } catch (err) {
+        showToast('ผิดพลาด', 'ไม่สามารถเชื่อมต่อ Server ได้', 'danger');
+      } finally {
+        btn.innerText = 'ยืนยันสร้างออเดอร์';
+        btn.disabled = false;
+      }
+    }
+
+    // Modal: Retry UID
+    function openRetryUidModal() {
+      if (!currentOrderData) return;
+      document.getElementById('retryUidOrderNo').value = currentOrderData.order_no;
+      document.getElementById('retryUidOld').value = currentOrderData.player_uid;
+      document.getElementById('retryUidInput').value = '';
+      openModal('retryUidModal');
+    }
+
+    async function submitRetryUid() {
+      const newUid = document.getElementById('retryUidInput').value.trim();
+      if (!newUid) {
+        showToast('ข้อมูลไม่ครบถ้วน', 'กรุณากรอก Player UID ใหม่', 'warning');
+        return;
+      }
+
+      const res = await fetch(`/orders/${activeOrderNo}/retry-uid`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPlayerUid: newUid })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        closeModal('retryUidModal');
+        showToast('แก้ไข UID สำเร็จ', 'ออเดอร์ถูกส่งกลับเข้าคิว QUEUED เรียบร้อยแล้ว', 'success');
+        lookupOrder();
+        fetchOrders();
+      } else {
+        showToast('ไม่สามารถอัปเดตได้', data.error.message, 'danger');
+      }
+    }
+
+    // Modal: Report Issue
+    function openReportIssueModal() {
+      if (!currentOrderData) return;
+      document.getElementById('reportIssueOrderNo').value = currentOrderData.order_no;
+      document.getElementById('reportIssueDesc').value = '';
+      openModal('reportIssueModal');
+    }
+
+    async function submitReportIssue() {
+      const desc = document.getElementById('reportIssueDesc').value.trim();
+      if (desc.length < 5) {
+        showToast('คำอธิบายสั้นเกินไป', 'กรุณาระบุรายละเอียดอย่างน้อย 5 ตัวอักษร', 'warning');
+        return;
+      }
+
+      const issueType = document.getElementById('reportIssueType').value;
+      const res = await fetch(`/orders/${activeOrderNo}/report-issue`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerId: currentOrderData?.customer_id || 'CUST-DEMO',
+          issueType,
+          description: desc
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        closeModal('reportIssueModal');
+        showToast('บันทึกการแจ้งปัญหาสำเร็จ', 'ออเดอร์ถูกย้ายไป DELAYED เพื่อรอตรวจสอบ', 'warning');
+        lookupOrder();
+        fetchOrders();
+      } else {
+        showToast('ไม่สามารถแจ้งปัญหาได้', data.error.message, 'danger');
+      }
+    }
+
+    // Modal: Refund
+    function openRefundModal() {
+      if (!currentOrderData) return;
+      document.getElementById('refundOrderNo').value = currentOrderData.order_no;
+      document.getElementById('refundAmountDisplay').value = `฿${parseFloat(currentOrderData.amount).toLocaleString()} ${currentOrderData.currency}`;
+      openModal('refundModal');
+    }
+
+    async function submitRefund() {
+      const reason = document.getElementById('refundReasonInput').value.trim() || 'ลูกค้ายกเลิกรายการ';
+      const res = await fetch(`/orders/${activeOrderNo}/refund`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        closeModal('refundModal');
+        showToast('คืนเงินสำเร็จ', `ออเดอร์ ${activeOrderNo} ถูกเปลี่ยนสถานะเป็น REFUNDED`, 'success');
+        lookupOrder();
+        fetchOrders();
+      } else {
+        showToast('ไม่สามารถคืนเงินได้', data.error.message, 'danger');
+      }
+    }
+
+    // Pay action
     async function actionPayOrder() {
       const res = await fetch(`/orders/${activeOrderNo}/pay`, {
         method: 'POST',
@@ -899,99 +1509,11 @@
       });
       const data = await res.json();
       if (data.success) {
-        showToast('ชำระเงินสำเร็จ! ออเดอร์ย้ายไป QUEUED', 'var(--success)');
+        showToast('ชำระเงินสำเร็จ', 'ยืนยันยอดเงินแล้ว ออเดอร์ย้ายไป QUEUED พร้อมให้ Bot เคลม', 'success');
         lookupOrder();
         fetchOrders();
       } else {
-        showToast(data.error.message, 'var(--danger)');
-      }
-    }
-
-    async function actionRefundOrder() {
-      const reason = prompt('ระบุเหตุผลการคืนเงิน:', 'Customer requested refund');
-      if (!reason) return;
-      const res = await fetch(`/orders/${activeOrderNo}/refund`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason })
-      });
-      const data = await res.json();
-      if (data.success) {
-        showToast('คืนเงินเรียบร้อยแล้ว!', 'var(--purple)');
-        lookupOrder();
-        fetchOrders();
-      } else {
-        showToast(data.error.message, 'var(--danger)');
-      }
-    }
-
-    async function openReportIssueModal() {
-      const desc = prompt('ระบุปัญหาที่พบ (Description):', 'ยังไม่ได้รับไอเทมในเกม');
-      if (!desc) return;
-      const res = await fetch(`/orders/${activeOrderNo}/report-issue`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customerId: 'CUST-DEMO',
-          issueType: 'TOP_UP_NOT_RECEIVED',
-          description: desc
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        showToast('บันทึกแจ้งปัญหาเรียบร้อยแล้ว!', 'var(--warning)');
-        lookupOrder();
-        fetchOrders();
-      } else {
-        showToast(data.error.message, 'var(--danger)');
-      }
-    }
-
-    async function openRetryUidModal() {
-      const newUid = prompt('กรอก Player UID ที่ถูกต้อง:', 'UID-99988877');
-      if (!newUid) return;
-      const res = await fetch(`/orders/${activeOrderNo}/retry-uid`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ newPlayerUid: newUid })
-      });
-      const data = await res.json();
-      if (data.success) {
-        showToast('อัปเดต UID และส่งเข้าคิวเรียบร้อย!', 'var(--success)');
-        lookupOrder();
-        fetchOrders();
-      } else {
-        showToast(data.error.message, 'var(--danger)');
-      }
-    }
-
-    async function openNewOrderModal() {
-      const customerId = 'CUST-' + Math.floor(1000 + Math.random() * 9000);
-      const uid = 'UID-' + Math.floor(100000 + Math.random() * 900000);
-      const idempotencyKey = 'IDEMPOTENCY-' + Date.now();
-
-      const res = await fetch('/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Idempotency-Key': idempotencyKey
-        },
-        body: JSON.stringify({
-          customerId,
-          gameId: 'ROV',
-          packageId: 'ROV-POINTS-500',
-          playerUid: uid,
-          amount: 150.0
-        })
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        showToast(`สร้างออเดอร์ใหม่: ${data.data.order_no}`, 'var(--success)');
-        document.getElementById('orderSearchInput').value = data.data.order_no;
-        activeOrderNo = data.data.order_no;
-        lookupOrder();
-        fetchOrders();
+        showToast('ไม่สามารถชำระเงินได้', data.error.message, 'danger');
       }
     }
 
@@ -1000,14 +1522,18 @@
       const res = await fetch('/bot/claim', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ botId: 'BOT-ALICE-01' })
+        body: JSON.stringify({ botId: 'BOT-ALPHA-01' })
       });
       const data = await res.json();
       if (data.data) {
-        showToast(`Bot เคลมออเดอร์ ${data.data.order_no} สำเร็จ!`, 'var(--primary)');
+        showSimResult(
+          'ข้อ 1: Bot เคลมออเดอร์สำเร็จ (Lease Acquired)',
+          `Bot ได้รับออเดอร์ ${data.data.order_no} พร้อมกำหนด Lease Lock เป็นเวลา 30 วินาที (สถานะเปลี่ยนเป็น IN_PROGRESS)`,
+          `กลไก Lease Lock: ในฐานข้อมูล locked_by = 'BOT-ALPHA-01' และ locked_until = NOW() + INTERVAL '30 seconds'`
+        );
         selectOrder(data.data.order_no);
       } else {
-        showToast('ไม่มีออเดอร์ในคิว (QUEUED)', 'var(--warning)');
+        showToast('คิวว่าง', 'ไม่มีออเดอร์ในสถานะ QUEUED ให้ Bot เคลม', 'warning');
       }
       fetchOrders();
     }
@@ -1016,47 +1542,56 @@
       const res = await fetch(`/bot/orders/${activeOrderNo}/heartbeat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ botId: 'BOT-ALICE-01' })
+        body: JSON.stringify({ botId: 'BOT-ALPHA-01' })
       });
       const data = await res.json();
       if (data.success) {
-        showToast('Heartbeat สำเร็จ! ต่ออายุ Lease ไปอีก 30 วินาที', 'var(--success)');
+        showToast('Heartbeat สำเร็จ', `ต่ออายุ Lease สำหรับออเดอร์ ${activeOrderNo} ไปอีก 30 วินาที`, 'success');
         lookupOrder();
       } else {
-        showToast(data.error.message, 'var(--danger)');
+        showToast('ไม่สามารถต่ออายุได้', data.error.message, 'danger');
       }
     }
 
     async function triggerRecoveryCycle() {
       const res = await fetch('/admin/run-recovery-cycle', { method: 'POST' });
       const data = await res.json();
-      showToast(`Recovery ทำงานแล้ว: กู้คืน ${data.data.recoveredLeases} คิว, หมดอายุ ${data.data.expiredPayments}`, 'var(--info)');
+      const r = data.data;
+      showSimResult(
+        'ผลการรัน Background Recovery Worker',
+        `ตรวจพบและกู้คืน Dead Leases: ${r.recoveredLeases} รายการ | ปรับเป็น DELAYED (เกิน 3 ครั้ง): ${r.delayedLeases} รายการ | กวาดหมดอายุ (Expired): ${r.expiredPayments} รายการ | คิวนานเกิน SLA: ${r.slaBreaches} รายการ`,
+        `Scheduler กวาดออเดอร์ IN_PROGRESS ที่ locked_until < NOW() และคืนเข้าคิว QUEUED แบบ Exponential Backoff อัตโนมัติ`
+      );
       lookupOrder();
       fetchOrders();
     }
 
     async function testRaceCondition() {
-      showToast('กำลังยิง Bot-1 และ Bot-2 แย่งเคลมพร้อมกัน...', 'var(--warning)');
       const [res1, res2] = await Promise.all([
         fetch('/bot/claim', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ botId: 'RACE-BOT-A' })
+          body: JSON.stringify({ botId: 'RACE-BOT-ALPHA' })
         }),
         fetch('/bot/claim', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ botId: 'RACE-BOT-B' })
+          body: JSON.stringify({ botId: 'RACE-BOT-BETA' })
         })
       ]);
 
       const data1 = await res1.json();
       const data2 = await res2.json();
 
-      const o1 = data1.data?.order_no || 'ไม่มี';
-      const o2 = data2.data?.order_no || 'ไม่มี';
+      const o1 = data1.data?.order_no || 'ไม่มีคิว';
+      const o2 = data2.data?.order_no || 'ไม่มีคิว';
 
-      showToast(`ผลลัพธ์: Bot-A ได้ ${o1} | Bot-B ได้ ${o2} (ไม่ซ้ำกันเด็ดขาด)`, 'var(--success)');
+      showSimResult(
+        'ข้อ 2: Concurrency Test (SELECT ... FOR UPDATE SKIP LOCKED)',
+        `ผลลัพธ์: Bot-Alpha ได้รับออเดอร์ [${o1}] | Bot-Beta ได้รับออเดอร์ [${o2}]`,
+        `คำสั่ง 'SELECT ... FOR UPDATE SKIP LOCKED' การันตีในระดับ ACID Transaction ว่า Bot ทั้งสองตัวที่แย่งคิวในมิลลิวินาทีเดียวกัน จะไม่มีวันได้ออเดอร์ซ้ำกันเด็ดขาด ป้องกันการจ่ายเงินซ้ำ (Double-Spend) ได้ 100%`
+      );
+
       fetchOrders();
       if (data1.data) selectOrder(data1.data.order_no);
     }
@@ -1069,14 +1604,22 @@
         body: JSON.stringify({
           eventId,
           orderNo: activeOrderNo,
-          amount: 150.0,
+          amount: currentOrderData ? parseFloat(currentOrderData.amount) : 150.0,
           transactionRef: 'TX-' + Math.floor(100000 + Math.random() * 900000)
         })
       });
       const data = await res.json();
-      showToast(`Webhook: ${data.data.message}`, 'var(--info)');
-      lookupOrder();
-      fetchOrders();
+      if (data.success) {
+        showSimResult(
+          'ข้อ 3: Webhook ธนาคาร (Idempotency & Expiry)',
+          `สถานะที่ได้รับ: ${data.data.status} | ข้อความ: ${data.data.message}`,
+          `ระบบตรวจเช็ค Unique Event ID ในตาราง webhook_events หากส่งซ้ำจะถูกตอบกลับว่า 'IDEMPOTENT_IGNORED' โดยไม่เกิดผลซ้ำ และหากเงินมาช้าหลังออเดอร์หมดอายุ (EXPIRED) ระบบจะเปลี่ยนเป็น REFUNDED คืนเงินให้อัตโนมัติ`
+        );
+        lookupOrder();
+        fetchOrders();
+      } else {
+        showToast('Webhook ผิดพลาด', data.error.message, 'danger');
+      }
     }
 
     async function testReportFailure(type) {
@@ -1084,20 +1627,33 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          botId: 'BOT-ALICE-01',
+          botId: 'BOT-ALPHA-01',
           errorType: type,
-          errorCode: type === 'PERMANENT' ? 'INVALID_UID' : 'PROVIDER_TIMEOUT_504',
-          errorMessage: type === 'PERMANENT' ? 'Player UID not found on server' : 'External game gateway timeout'
+          errorCode: type === 'PERMANENT' ? 'INVALID_PLAYER_UID' : 'PROVIDER_503_SERVICE_UNAVAILABLE',
+          errorMessage: type === 'PERMANENT' ? 'Player UID not found on official game server' : 'External game gateway connection timed out'
         })
       });
       const data = await res.json();
       if (data.success) {
-        showToast(`บันทึกข้อผิดพลาด ${type} สำเร็จ!`, 'var(--danger)');
+        showSimResult(
+          `ข้อ 4: จำลองข้อผิดพลาดแบบ ${type}`,
+          type === 'PERMANENT' 
+            ? `ข้อผิดพลาดถาวร (UID ผิด): ระบบตัดเป็นสถานะ FAILED ทันที ไม่เสียเวลา Retry ซ้ำ และเปิดโอกาสให้ลูกค้าแก้ไข UID ผ่านปุ่ม 'แก้ไข UID แล้วลองใหม่'`
+            : `ข้อผิดพลาดชั่วคราว (Provider ล่ม): ระบบเพิ่ม retry_count และนำกลับเข้าคิว QUEUED เพื่อรอการลองใหม่ตามรอบ`,
+          `การแยกประเภท Transient vs Permanent Error ช่วยป้องกันไม่ให้ Worker จมอยู่กับการพยายามทำรายการที่เป็นไปไม่ได้`
+        );
         lookupOrder();
         fetchOrders();
       } else {
-        showToast(data.error.message, 'var(--danger)');
+        showToast('เกิดข้อผิดพลาด', data.error.message, 'danger');
       }
+    }
+
+    function showSimResult(title, bannerText, detailText) {
+      document.getElementById('simResultTitle').innerText = title;
+      document.getElementById('simResultBanner').innerText = bannerText;
+      document.getElementById('simResultDetail').innerText = detailText;
+      openModal('simResultModal');
     }
 
     // Init
