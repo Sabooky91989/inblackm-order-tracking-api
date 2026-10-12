@@ -8,3 +8,6 @@ yarn-debug.log*
 yarn-error.log*
 .DS_Store
 Thumbs.db
+
+# Independent project folder with its own git repository
+aniimo-topup-api/
