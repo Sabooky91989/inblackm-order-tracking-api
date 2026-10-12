@@ -1,0 +1,44 @@
+export enum OrderStatus {
+  PENDING_PAYMENT = 'PENDING_PAYMENT',
+  QUEUED = 'QUEUED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  DELAYED = 'DELAYED',
+  FAILED = 'FAILED',
+  EXPIRED = 'EXPIRED',
+  REFUNDED = 'REFUNDED',
+}
+
+export const CURRENT_ORDER_STATUSES: OrderStatus[] = [
+  OrderStatus.PENDING_PAYMENT,
+  OrderStatus.QUEUED,
+  OrderStatus.IN_PROGRESS,
+  OrderStatus.DELAYED,
+];
+
+export const HISTORY_ORDER_STATUSES: OrderStatus[] = [
+  OrderStatus.COMPLETED,
+  OrderStatus.FAILED,
+  OrderStatus.EXPIRED,
+  OrderStatus.REFUNDED,
+];
+
+export enum ActorType {
+  CUSTOMER = 'CUSTOMER',
+  SYSTEM = 'SYSTEM',
+  BOT_WORKER = 'BOT_WORKER',
+  BANK_WEBHOOK = 'BANK_WEBHOOK',
+  ADMIN = 'ADMIN',
+}
+
+export enum FailureType {
+  TRANSIENT = 'TRANSIENT',
+  PERMANENT = 'PERMANENT',
+}
+
+export enum AlertType {
+  SLA_BREACH = 'SLA_BREACH',
+  BOT_CRASH_MAX_RETRY = 'BOT_CRASH_MAX_RETRY',
+  PAYMENT_EXPIRED = 'PAYMENT_EXPIRED',
+  SUSPICIOUS_WEBHOOK = 'SUSPICIOUS_WEBHOOK',
+}

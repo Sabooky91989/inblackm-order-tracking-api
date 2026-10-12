@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Tracking & Problem Resolution System - InblackM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0B0F19;
+      --bg-card: rgba(18, 24, 38, 0.7);
+      --bg-card-hover: rgba(26, 34, 52, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(99, 102, 241, 0.3);
+      --primary: #6366F1;
+      --primary-hover: #4F46E5;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      --success: #10B981;
+      --success-glow: rgba(16, 185, 129, 0.2);
+      --warning: #F59E0B;
+      --warning-glow: rgba(245, 158, 11, 0.2);
+      --danger: #EF4444;
+      --danger-glow: rgba(239, 68, 68, 0.2);
+      --info: #06B6D4;
+      --purple: #A855F7;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --font-en: 'Plus Jakarta Sans', sans-serif;
+      --font-th: 'Prompt', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.1) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+      color: var(--text-main);
+      font-family: var(--font-en), var(--font-th);
+      min-height: 100vh;
+      line-height: 1.6;
+      padding: 24px 20px;
+    }
+
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 28px;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    .brand-title h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FFFFFF, #CBD5E1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-size: 13px;
+      font-weight: 600;
+      color: #34D399;
+    }
+
+    .status-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.9); }
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: border-color 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Tabs */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 2px 10px var(--primary-glow);
+    }
+
+    /* Input & Search */
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-success {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34D399;
+    }
+    .btn-success:hover {
+      background: rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #F87171;
+    }
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-warning {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #FBBF24;
+    }
+    .btn-warning:hover {
+      background: rgba(245, 158, 11, 0.3);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-PENDING_PAYMENT { background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-QUEUED { background: rgba(6, 182, 212, 0.15); color: #22D3EE; border: 1px solid rgba(6, 182, 212, 0.3); }
+    .badge-IN_PROGRESS { background: rgba(99, 102, 241, 0.15); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.3); }
+    .badge-COMPLETED { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-DELAYED { background: rgba(234, 88, 12, 0.15); color: #FB923C; border: 1px solid rgba(234, 88, 12, 0.3); }
+    .badge-FAILED { background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-EXPIRED { background: rgba(100, 116, 139, 0.2); color: #94A3B8; border: 1px solid rgba(100, 116, 139, 0.3); }
+    .badge-REFUNDED { background: rgba(168, 85, 247, 0.15); color: #C084FC; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+    /* Orders Table */
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+    }
+
+    /* Stepper */
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin: 28px 0;
+    }
+
+    .stepper::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 30px;
+      right: 30px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      z-index: 1;
+    }
+
+    .step {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 2px solid var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: all 0.3s;
+    }
+
+    .step.active .step-circle {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .step.done .step-circle {
+      border-color: var(--success);
+      background: var(--success);
+      color: #fff;
+    }
+
+    .step.error .step-circle {
+      border-color: var(--danger);
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .step-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Timeline list */
+    .timeline {
+      position: relative;
+      padding-left: 24px;
+      margin-top: 20px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      left: 7px;
+      width: 2px;
+      background: var(--border-color);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -24px;
+      top: 4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 3px solid var(--primary);
+    }
+
+    .timeline-content {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .timeline-action {
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .timeline-time {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .timeline-actor {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Test Cases Simulator Box */
+    .test-box {
+      background: rgba(99, 102, 241, 0.05);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .test-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #A5B4FC;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .test-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Info Grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .info-item {
+      background: rgba(15, 23, 42, 0.4);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-top: 2px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(18, 24, 38, 0.95);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 1000;
+      display: none;
+      animation: slideIn 0.3s forwards;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-badge">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-title">
+          <h1>Order Tracking & Self-Healing API</h1>
+          <p>ระบบติดตามออเดอร์ร้านเติมเกมและการจัดการเคสปัญหาอัตโนมัติ (InblackM)</p>
+        </div>
+      </div>
+      <div class="system-status">
+        <div class="status-pulse"></div>
+        <span>SYSTEM ONLINE (PostgreSQL Connected)</span>
+      </div>
+    </header>
+
+    <div class="dashboard-grid">
+      <!-- Left Column: Order Lookup & Tracking Stepper & Timeline -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🔍 ค้นหาและติดตามออเดอร์</span>
+          </div>
+          <button class="btn btn-outline" onclick="openNewOrderModal()">+ สร้างออเดอร์ใหม่</button>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" id="orderSearchInput" placeholder="กรอกเลขออเดอร์ เช่น ORD-2587965432159-458" value="ORD-2587965432159-458">
+          <button class="btn btn-primary" onclick="lookupOrder()">ค้นหา</button>
+        </div>
+
+        <div id="orderDetailContainer">
+          <!-- Stepper Indicator -->
+          <div class="stepper" id="stepper">
+            <div class="step" id="step-PENDING_PAYMENT">
+              <div class="step-circle">1</div>
+              <div class="step-label">รอชำระเงิน</div>
+            </div>
+            <div class="step" id="step-QUEUED">
+              <div class="step-circle">2</div>
+              <div class="step-label">เข้าคิวรอ Bot</div>
+            </div>
+            <div class="step" id="step-IN_PROGRESS">
+              <div class="step-circle">3</div>
+              <div class="step-label">Bot กำลังเติม</div>
+            </div>
+            <div class="step" id="step-COMPLETED">
+              <div class="step-circle">4</div>
+              <div class="step-label">สำเร็จ</div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 id="orderNumberDisplay" style="font-size: 18px; font-weight: 700;">ORD-...</h3>
+            <span id="orderStatusBadge" class="badge badge-PENDING_PAYMENT">LOADING</span>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">เกม / แพ็กเกจ</div>
+              <div class="info-value" id="orderGameDisplay">-</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Player UID</div>
+              <div class="info-value" id="orderUidDisplay">-</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">ยอดชำระ</div>
+              <div class="info-value" id="orderAmountDisplay">-</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Bot ที่ถือ Lease</div>
+              <div class="info-value" id="orderBotDisplay">ไม่มี</div>
+            </div>
+          </div>
+
+          <!-- Self-Healing Actions -->
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0;">
+            <button class="btn btn-success" id="payOrderBtn" onclick="actionPayOrder()">💳 ชำระเงิน (จำลองจ่าย)</button>
+            <button class="btn btn-warning" id="reportIssueBtn" onclick="openReportIssueModal()">⚠️ แจ้งปัญหา</button>
+            <button class="btn btn-outline" id="retryUidBtn" onclick="openRetryUidModal()">✏️ แก้ไข UID แล้วลองใหม่</button>
+            <button class="btn btn-danger" id="refundOrderBtn" onclick="actionRefundOrder()">💸 ขอคืนเงิน</button>
+          </div>
+
+          <!-- Timeline -->
+          <div class="card-title" style="margin-top: 24px; font-size: 15px;">
+            <span>⏱️ ประวัติการเปลี่ยนสถานะ (Audit Timeline)</span>
+          </div>
+          <div class="timeline" id="timelineList">
+            <!-- Timeline items injected here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Problem Case Simulator & Order Table -->
+      <div>
+        <!-- Problem Cases Interactive Bench -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <div class="card-title">
+              <span>🧪 ทดสอบเคสปัญหา 5 ข้อ (Problem Case Simulator)</span>
+            </div>
+            <button class="btn btn-outline" style="font-size: 11px;" onclick="triggerRecoveryCycle()">🔄 รัน Recovery ทันที</button>
+          </div>
+
+          <!-- Case 1 -->
+          <div class="test-box">
+            <div class="test-title">
+              <span>ข้อ 1: Bot จ่ายเงินล่ม / Lease Timeout (Heartbeat)</span>
+              <span class="badge badge-IN_PROGRESS" style="font-size: 10px;">Self-Healing</span>
+            </div>
+            <p class="test-desc">Bot Claim ออเดอร์แล้วเกิดแครชหรือหมดเวลา Lease ระบบจะตรวจจับและคืนเข้าคิวแบบ Exponential Backoff (สูงสุด 3 ครั้งก่อน DELAYED)</p>
+            <div class="action-row">
+              <button class="btn btn-primary" onclick="testBotClaim()">1. Bot Claim ออเดอร์</button>
+              <button class="btn btn-outline" onclick="testBotHeartbeat()">2. ส่ง Heartbeat</button>
+              <button class="btn btn-danger" onclick="triggerRecoveryCycle()">3. ตรวจจับ Bot ล่ม</button>
+            </div>
+          </div>
+
+          <!-- Case 2 -->
+          <div class="test-box">
+            <div class="test-title">
+              <span>ข้อ 2: แย่งออเดอร์พร้อมกัน (Race Condition)</span>
+              <span class="badge badge-QUEUED" style="font-size: 10px;">SKIP LOCKED</span>
+            </div>
+            <p class="test-desc">ยิง Bot-A และ Bot-B แย่งเคลมออเดอร์ในมิลลิวินาทีเดียวกัน ป้องกันจ่ายซ้ำด้วย `SELECT ... FOR UPDATE SKIP LOCKED`</p>
+            <div class="action-row">
+              <button class="btn btn-warning" onclick="testRaceCondition()">⚡ ทดสอบ Bot แย่งเคลมพร้อมกัน</button>
+            </div>
+          </div>
+
+          <!-- Case 3 -->
+          <div class="test-box">
+            <div class="test-title">
+              <span>ข้อ 3: Webhook ธนาคารมาซ้ำ / มาช้า</span>
+              <span class="badge badge-PENDING_PAYMENT" style="font-size: 10px;">Idempotency</span>
+            </div>
+            <p class="test-desc">ทดสอบส่ง Webhook พร้อม Event ID ซ้ำ (ไม่ทำซ้ำ) หรือส่งหลังหมดอายุ (ตีเป็นคืนเงินอัตโนมัติ)</p>
+            <div class="action-row">
+              <button class="btn btn-success" onclick="testWebhookPayment(false)">ส่ง Webhook ปกติ</button>
+              <button class="btn btn-outline" onclick="testWebhookPayment(true)">ส่ง Event ID ซ้ำ (Idempotent)</button>
+            </div>
+          </div>
+
+          <!-- Case 4 -->
+          <div class="test-box">
+            <div class="test-title">
+              <span>ข้อ 4: เติมไม่สำเร็จ (UID ผิด vs ระบบค่ายล่ม)</span>
+              <span class="badge badge-FAILED" style="font-size: 10px;">Classification</span>
+            </div>
+            <p class="test-desc">แยก Transient Error (ค่ายล่ม 503 → Retry) กับ Permanent Error (UID ผิด → FAILED ทันทีให้ลูกค้าแก้)</p>
+            <div class="action-row">
+              <button class="btn btn-warning" onclick="testReportFailure('TRANSIENT')">ทดสอบค่ายล่ม (Transient)</button>
+              <button class="btn btn-danger" onclick="testReportFailure('PERMANENT')">ทดสอบ UID ผิด (Permanent)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order List Table (Current vs History) -->
+        <div class="card">
+          <div class="tabs-nav">
+            <button class="tab-btn active" id="tabCurrentBtn" onclick="switchTab('current')">ออเดอร์ปัจจุบัน (Current)</button>
+            <button class="tab-btn" id="tabHistoryBtn" onclick="switchTab('history')">ประวัติที่ผ่านมา (History)</button>
+          </div>
+
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>เลขออเดอร์</th>
+                  <th>เกม / UID</th>
+                  <th>ยอดเงิน</th>
+                  <th>สถานะ</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <!-- Orders injected here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toastBox">Notification</div>
+
+  <script>
+    let currentTab = 'current';
+    let activeOrderNo = 'ORD-2587965432159-458';
+
+    function showToast(message, color = 'var(--text-main)') {
+      const toast = document.getElementById('toastBox');
+      toast.innerText = message;
+      toast.style.borderColor = color;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    }
+
+    async function fetchOrders() {
+      try {
+        const res = await fetch(`/orders?tab=${currentTab}&limit=10`);
+        const data = await res.json();
+        if (data.success) {
+          renderOrdersTable(data.data.orders);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderOrdersTable(orders) {
+      const tbody = document.getElementById('ordersTableBody');
+      if (!orders.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-dim); padding:20px;">ไม่มีรายการในหมวดนี้</td></tr>';
+        return;
+      }
+      tbody.innerHTML = orders.map(o => `
+        <tr onclick="selectOrder('${o.order_no}')">
+          <td><strong style="color:var(--primary);">${o.order_no}</strong></td>
+          <td>${o.game_id} <span style="color:var(--text-dim);">(${o.player_uid})</span></td>
+          <td>฿${parseFloat(o.amount).toLocaleString()}</td>
+          <td><span class="badge badge-${o.status}">${o.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tabCurrentBtn').classList.toggle('active', tab === 'current');
+      document.getElementById('tabHistoryBtn').classList.toggle('active', tab === 'history');
+      fetchOrders();
+    }
+
+    async function selectOrder(orderNo) {
+      document.getElementById('orderSearchInput').value = orderNo;
+      activeOrderNo = orderNo;
+      await lookupOrder();
+    }
+
+    async function lookupOrder() {
+      const orderNo = document.getElementById('orderSearchInput').value.trim();
+      if (!orderNo) return;
+      activeOrderNo = orderNo;
+
+      try {
+        const [orderRes, timelineRes] = await Promise.all([
+          fetch(`/orders/${orderNo}`),
+          fetch(`/orders/${orderNo}/timeline`)
+        ]);
+
+        const orderData = await orderRes.json();
+        const timelineData = await timelineRes.json();
+
+        if (!orderData.success) {
+          showToast(`❌ ${orderData.error.message}`, 'var(--danger)');
+          return;
+        }
+
+        renderOrderDetail(orderData.data);
+        if (timelineData.success) {
+          renderTimeline(timelineData.data.timeline);
+        }
+      } catch (err) {
+        showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'var(--danger)');
+      }
+    }
+
+    function renderOrderDetail(o) {
+      document.getElementById('orderNumberDisplay').innerText = o.order_no;
+      const badge = document.getElementById('orderStatusBadge');
+      badge.className = `badge badge-${o.status}`;
+      badge.innerText = o.status;
+
+      document.getElementById('orderGameDisplay').innerText = `${o.game_id} (${o.package_id})`;
+      document.getElementById('orderUidDisplay').innerText = o.player_uid;
+      document.getElementById('orderAmountDisplay').innerText = `฿${parseFloat(o.amount).toLocaleString()} ${o.currency}`;
+      document.getElementById('orderBotDisplay').innerText = o.locked_by ? `${o.locked_by} (Lease ถึง: ${new Date(o.locked_until).toLocaleTimeString()})` : 'ไม่มี';
+
+      // Update stepper
+      const steps = ['PENDING_PAYMENT', 'QUEUED', 'IN_PROGRESS', 'COMPLETED'];
+      steps.forEach(s => {
+        const el = document.getElementById(`step-${s}`);
+        el.className = 'step';
+      });
+
+      if (o.status === 'COMPLETED') {
+        steps.forEach(s => document.getElementById(`step-${s}`).classList.add('done'));
+      } else if (o.status === 'FAILED' || o.status === 'EXPIRED') {
+        document.getElementById(`step-${steps[0]}`).classList.add('done');
+        const activeIdx = Math.max(0, steps.indexOf(o.status));
+        if (document.getElementById(`step-${steps[activeIdx]}`)) {
+          document.getElementById(`step-${steps[activeIdx]}`).classList.add('error');
+        }
+      } else {
+        const idx = steps.indexOf(o.status);
+        for (let i = 0; i <= idx; i++) {
+          if (i < idx) document.getElementById(`step-${steps[i]}`).classList.add('done');
+          if (i === idx) document.getElementById(`step-${steps[i]}`).classList.add('active');
+        }
+      }
+    }
+
+    function renderTimeline(timeline) {
+      const container = document.getElementById('timelineList');
+      if (!timeline.length) {
+        container.innerHTML = '<p style="color:var(--text-dim);">ไม่มีประวัติ</p>';
+        return;
+      }
+      container.innerHTML = timeline.map(item => `
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-action">${item.action}</span>
+              <span class="timeline-time">${new Date(item.created_at).toLocaleTimeString()}</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom: 6px;">
+              ${item.reason || 'สถานะ: ' + item.to_status}
+            </div>
+            <span class="timeline-actor">Actor: ${item.actor}</span>
+            ${item.from_status ? `<span style="font-size:11px; color:var(--text-dim); margin-left:8px;">${item.from_status} ➔ ${item.to_status}</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Action handlers
+    async function actionPayOrder() {
+      const res = await fetch(`/orders/${activeOrderNo}/pay`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentRef: `MOCK-PAY-${Date.now()}` })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('ชำระเงินสำเร็จ! ออเดอร์ย้ายไป QUEUED', 'var(--success)');
+        lookupOrder();
+        fetchOrders();
+      } else {
+        showToast(data.error.message, 'var(--danger)');
+      }
+    }
+
+    async function actionRefundOrder() {
+      const reason = prompt('ระบุเหตุผลการคืนเงิน:', 'Customer requested refund');
+      if (!reason) return;
+      const res = await fetch(`/orders/${activeOrderNo}/refund`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('คืนเงินเรียบร้อยแล้ว!', 'var(--purple)');
+        lookupOrder();
+        fetchOrders();
+      } else {
+        showToast(data.error.message, 'var(--danger)');
+      }
+    }
+
+    async function openReportIssueModal() {
+      const desc = prompt('ระบุปัญหาที่พบ (Description):', 'ยังไม่ได้รับไอเทมในเกม');
+      if (!desc) return;
+      const res = await fetch(`/orders/${activeOrderNo}/report-issue`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerId: 'CUST-DEMO',
+          issueType: 'TOP_UP_NOT_RECEIVED',
+          description: desc
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('บันทึกแจ้งปัญหาเรียบร้อยแล้ว!', 'var(--warning)');
+        lookupOrder();
+        fetchOrders();
+      } else {
+        showToast(data.error.message, 'var(--danger)');
+      }
+    }
+
+    async function openRetryUidModal() {
+      const newUid = prompt('กรอก Player UID ที่ถูกต้อง:', 'UID-99988877');
+      if (!newUid) return;
+      const res = await fetch(`/orders/${activeOrderNo}/retry-uid`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPlayerUid: newUid })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('อัปเดต UID และส่งเข้าคิวเรียบร้อย!', 'var(--success)');
+        lookupOrder();
+        fetchOrders();
+      } else {
+        showToast(data.error.message, 'var(--danger)');
+      }
+    }
+
+    async function openNewOrderModal() {
+      const customerId = 'CUST-' + Math.floor(1000 + Math.random() * 9000);
+      const uid = 'UID-' + Math.floor(100000 + Math.random() * 900000);
+      const idempotencyKey = 'IDEMPOTENCY-' + Date.now();
+
+      const res = await fetch('/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': idempotencyKey
+        },
+        body: JSON.stringify({
+          customerId,
+          gameId: 'ROV',
+          packageId: 'ROV-POINTS-500',
+          playerUid: uid,
+          amount: 150.0
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        showToast(`สร้างออเดอร์ใหม่: ${data.data.order_no}`, 'var(--success)');
+        document.getElementById('orderSearchInput').value = data.data.order_no;
+        activeOrderNo = data.data.order_no;
+        lookupOrder();
+        fetchOrders();
+      }
+    }
+
+    // Simulator Handlers
+    async function testBotClaim() {
+      const res = await fetch('/bot/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ botId: 'BOT-ALICE-01' })
+      });
+      const data = await res.json();
+      if (data.data) {
+        showToast(`Bot เคลมออเดอร์ ${data.data.order_no} สำเร็จ!`, 'var(--primary)');
+        selectOrder(data.data.order_no);
+      } else {
+        showToast('ไม่มีออเดอร์ในคิว (QUEUED)', 'var(--warning)');
+      }
+      fetchOrders();
+    }
+
+    async function testBotHeartbeat() {
+      const res = await fetch(`/bot/orders/${activeOrderNo}/heartbeat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ botId: 'BOT-ALICE-01' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Heartbeat สำเร็จ! ต่ออายุ Lease ไปอีก 30 วินาที', 'var(--success)');
+        lookupOrder();
+      } else {
+        showToast(data.error.message, 'var(--danger)');
+      }
+    }
+
+    async function triggerRecoveryCycle() {
+      const res = await fetch('/admin/run-recovery-cycle', { method: 'POST' });
+      const data = await res.json();
+      showToast(`Recovery ทำงานแล้ว: กู้คืน ${data.data.recoveredLeases} คิว, หมดอายุ ${data.data.expiredPayments}`, 'var(--info)');
+      lookupOrder();
+      fetchOrders();
+    }
+
+    async function testRaceCondition() {
+      showToast('กำลังยิง Bot-1 และ Bot-2 แย่งเคลมพร้อมกัน...', 'var(--warning)');
+      const [res1, res2] = await Promise.all([
+        fetch('/bot/claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ botId: 'RACE-BOT-A' })
+        }),
+        fetch('/bot/claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ botId: 'RACE-BOT-B' })
+        })
+      ]);
+
+      const data1 = await res1.json();
+      const data2 = await res2.json();
+
+      const o1 = data1.data?.order_no || 'ไม่มี';
+      const o2 = data2.data?.order_no || 'ไม่มี';
+
+      showToast(`ผลลัพธ์: Bot-A ได้ ${o1} | Bot-B ได้ ${o2} (ไม่ซ้ำกันเด็ดขาด)`, 'var(--success)');
+      fetchOrders();
+      if (data1.data) selectOrder(data1.data.order_no);
+    }
+
+    async function testWebhookPayment(isDuplicate) {
+      const eventId = isDuplicate ? 'BANK-EVT-DUPLICATE-FIXED-KEY' : 'BANK-EVT-' + Date.now();
+      const res = await fetch('/webhooks/bank-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventId,
+          orderNo: activeOrderNo,
+          amount: 150.0,
+          transactionRef: 'TX-' + Math.floor(100000 + Math.random() * 900000)
+        })
+      });
+      const data = await res.json();
+      showToast(`Webhook: ${data.data.message}`, 'var(--info)');
+      lookupOrder();
+      fetchOrders();
+    }
+
+    async function testReportFailure(type) {
+      const res = await fetch(`/bot/orders/${activeOrderNo}/fail`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          botId: 'BOT-ALICE-01',
+          errorType: type,
+          errorCode: type === 'PERMANENT' ? 'INVALID_UID' : 'PROVIDER_TIMEOUT_504',
+          errorMessage: type === 'PERMANENT' ? 'Player UID not found on server' : 'External game gateway timeout'
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`บันทึกข้อผิดพลาด ${type} สำเร็จ!`, 'var(--danger)');
+        lookupOrder();
+        fetchOrders();
+      } else {
+        showToast(data.error.message, 'var(--danger)');
+      }
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchOrders();
+      lookupOrder();
+    });
+  </script>
+</body>
+</html>

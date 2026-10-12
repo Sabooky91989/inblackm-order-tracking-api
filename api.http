@@ -1,0 +1,181 @@
+### ====================================================================
+### InblackM - Order Tracking & Problem Resolution API (REST Client)
+### Base URL: http://localhost:3000
+### ====================================================================
+
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@sampleOrderNo = ORD-2587965432159-458
+
+### 1. Health Check
+GET {{baseUrl}}/health
+Content-Type: {{contentType}}
+
+### ====================================================================
+### ส่วนที่ 1: Core API
+### ====================================================================
+
+### 2. Create New Order (With Idempotency-Key)
+# POST /orders
+POST {{baseUrl}}/orders
+Content-Type: {{contentType}}
+Idempotency-Key: IDEM-KEY-{{$timestamp}}
+
+{
+  "customerId": "CUST-USER-888",
+  "gameId": "ROV",
+  "packageId": "ROV-POINTS-500",
+  "playerUid": "984512398",
+  "amount": 150.00,
+  "currency": "THB"
+}
+
+### 3. Create Duplicate Order with Same Idempotency-Key (Returns Cached HIT)
+POST {{baseUrl}}/orders
+Content-Type: {{contentType}}
+Idempotency-Key: IDEM-KEY-FIXED-SAMPLE-001
+
+{
+  "customerId": "CUST-USER-888",
+  "gameId": "ROV",
+  "packageId": "ROV-POINTS-500",
+  "playerUid": "984512398",
+  "amount": 150.00,
+  "currency": "THB"
+}
+
+### 4. Search Order by Order Number (Format ORD-timestamp-random)
+# GET /orders/:orderNo
+GET {{baseUrl}}/orders/{{sampleOrderNo}}
+Content-Type: {{contentType}}
+
+### 5. Validate Bad Order Format (Expect 400 INVALID_ORDER_FORMAT)
+GET {{baseUrl}}/orders/INVALID-FORMAT-999
+Content-Type: {{contentType}}
+
+### 6. Search Non-Existent Order (Expect 404 ORDER_NOT_FOUND)
+GET {{baseUrl}}/orders/ORD-9999999999999-999
+Content-Type: {{contentType}}
+
+### 7. List Active Orders (Current Tab)
+# GET /orders?tab=current|history&page=&limit=
+GET {{baseUrl}}/orders?tab=current&page=1&limit=10
+Content-Type: {{contentType}}
+
+### 8. List Past Completed/Terminal Orders (History Tab)
+GET {{baseUrl}}/orders?tab=history&page=1&limit=10
+Content-Type: {{contentType}}
+
+### 9. View Order Status Transition Timeline
+# GET /orders/:orderNo/timeline
+GET {{baseUrl}}/orders/{{sampleOrderNo}}/timeline
+Content-Type: {{contentType}}
+
+### 10. Customer Reports Issue
+# POST /orders/:orderNo/report-issue
+POST {{baseUrl}}/orders/{{sampleOrderNo}}/report-issue
+Content-Type: {{contentType}}
+
+{
+  "customerId": "CUST-001",
+  "issueType": "TOP_UP_NOT_RECEIVED",
+  "description": "Payment was debited 15 minutes ago but game points are not reflecting."
+}
+
+### ====================================================================
+### ส่วนที่ 2: เคสปัญหา 5 ข้อ (Problem Cases)
+### ====================================================================
+
+### เคส 1 & 2: Bot Worker Claim Order (Atomic Concurrency via SKIP LOCKED)
+# POST /bot/claim
+POST {{baseUrl}}/bot/claim
+Content-Type: {{contentType}}
+
+{
+  "botId": "BOT-WORKER-ALPHA-01"
+}
+
+### เคส 1: Bot Sends Heartbeat Lease Extension
+# POST /bot/orders/:orderNo/heartbeat
+POST {{baseUrl}}/bot/orders/{{sampleOrderNo}}/heartbeat
+Content-Type: {{contentType}}
+
+{
+  "botId": "BOT-WORKER-ALPHA-01"
+}
+
+### Bot Marks Order as Complete
+# POST /bot/orders/:orderNo/complete
+POST {{baseUrl}}/bot/orders/{{sampleOrderNo}}/complete
+Content-Type: {{contentType}}
+
+{
+  "botId": "BOT-WORKER-ALPHA-01",
+  "metadata": {
+    "providerTransactionId": "PROV-TX-998811",
+    "deliverySpeedMs": 1420
+  }
+}
+
+### เคส 4: Bot Reports Failure (TRANSIENT vs PERMANENT)
+# POST /bot/orders/:orderNo/fail
+POST {{baseUrl}}/bot/orders/{{sampleOrderNo}}/fail
+Content-Type: {{contentType}}
+
+{
+  "botId": "BOT-WORKER-ALPHA-01",
+  "errorType": "PERMANENT",
+  "errorCode": "INVALID_PLAYER_UID",
+  "errorMessage": "Player UID not found on official game server."
+}
+
+### เคส 4 Self-Healing: Customer Updates UID and Re-queues Order
+# POST /orders/:orderNo/retry-uid
+POST {{baseUrl}}/orders/{{sampleOrderNo}}/retry-uid
+Content-Type: {{contentType}}
+
+{
+  "newPlayerUid": "CORRECTED-UID-998877"
+}
+
+### เคส 3: Bank Payment Webhook (Normal Payment Confirmation)
+# POST /webhooks/bank-payment
+POST {{baseUrl}}/webhooks/bank-payment
+Content-Type: {{contentType}}
+
+{
+  "eventId": "BANK-EVT-{{$timestamp}}",
+  "orderNo": "{{sampleOrderNo}}",
+  "amount": 150.00,
+  "transactionRef": "TXN-PROMPTPAY-445566"
+}
+
+### เคส 3: Duplicate Bank Payment Webhook (Idempotent Handling)
+POST {{baseUrl}}/webhooks/bank-payment
+Content-Type: {{contentType}}
+
+{
+  "eventId": "BANK-EVT-DUPLICATE-SAMPLE-001",
+  "orderNo": "{{sampleOrderNo}}",
+  "amount": 150.00,
+  "transactionRef": "TXN-PROMPTPAY-445566"
+}
+
+### Customer / Admin Requests Refund
+# POST /orders/:orderNo/refund
+POST {{baseUrl}}/orders/{{sampleOrderNo}}/refund
+Content-Type: {{contentType}}
+
+{
+  "reason": "Customer changed mind before processing"
+}
+
+### Admin Triggers Background Recovery Cycle (Detects Crashes, SLA breaches, Expirations)
+# POST /admin/run-recovery-cycle
+POST {{baseUrl}}/admin/run-recovery-cycle
+Content-Type: {{contentType}}
+
+### Admin Views System Alerts
+# GET /admin/alerts
+GET {{baseUrl}}/admin/alerts
+Content-Type: {{contentType}}

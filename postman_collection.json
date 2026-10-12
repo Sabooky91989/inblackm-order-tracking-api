@@ -1,0 +1,301 @@
+{
+  "info": {
+    "_postman_id": "inblackm-order-tracking-api-v1",
+    "name": "InblackM - Order Tracking & Problem Resolution API",
+    "description": "Collection covering Order Tracking API and automated problem resolution mechanisms for technical assessment.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "orderNo",
+      "value": "ORD-2587965432159-458",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Part 1 - Core Order API",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "POST /orders - Create Order (with Idempotency-Key)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "IDEM-KEY-POSTMAN-{{$timestamp}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"CUST-999\",\n  \"gameId\": \"ROV\",\n  \"packageId\": \"ROV-POINTS-500\",\n  \"playerUid\": \"984512398\",\n  \"amount\": 150.00,\n  \"currency\": \"THB\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"]
+            }
+          }
+        },
+        {
+          "name": "GET /orders/:orderNo - Search by OrderNo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderNo}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderNo}}"]
+            }
+          }
+        },
+        {
+          "name": "GET /orders/:orderNo - Bad Format Validation (Expect 400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/INVALID-FORMAT-999",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "INVALID-FORMAT-999"]
+            }
+          }
+        },
+        {
+          "name": "GET /orders/:orderNo - Non-Existent Order (Expect 404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/ORD-9999999999999-999",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "ORD-9999999999999-999"]
+            }
+          }
+        },
+        {
+          "name": "GET /orders - List Current Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders?tab=current&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"],
+              "query": [
+                { "key": "tab", "value": "current" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /orders - List History Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders?tab=history&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"],
+              "query": [
+                { "key": "tab", "value": "history" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /orders/:orderNo/timeline - Order Status History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderNo}}/timeline",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderNo}}", "timeline"]
+            }
+          }
+        },
+        {
+          "name": "POST /orders/:orderNo/report-issue - Report Issue",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"CUST-999\",\n  \"issueType\": \"TOP_UP_NOT_RECEIVED\",\n  \"description\": \"I paid 15 minutes ago but diamonds have not arrived yet.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderNo}}/report-issue",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderNo}}", "report-issue"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Part 2 - Problem Cases Solutions",
+      "item": [
+        {
+          "name": "Case 1 & 2: POST /bot/claim - Concurrency Safe Claim (SKIP LOCKED)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"botId\": \"BOT-WORKER-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bot/claim",
+              "host": ["{{baseUrl}}"],
+              "path": ["bot", "claim"]
+            }
+          }
+        },
+        {
+          "name": "Case 1: POST /bot/orders/:orderNo/heartbeat - Heartbeat Lease Extension",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"botId\": \"BOT-WORKER-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bot/orders/{{orderNo}}/heartbeat",
+              "host": ["{{baseUrl}}"],
+              "path": ["bot", "orders", "{{orderNo}}", "heartbeat"]
+            }
+          }
+        },
+        {
+          "name": "POST /bot/orders/:orderNo/complete - Top-up Succeeded",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"botId\": \"BOT-WORKER-01\",\n  \"metadata\": {\n    \"providerTx\": \"TX-998811\",\n    \"speedMs\": 1200\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bot/orders/{{orderNo}}/complete",
+              "host": ["{{baseUrl}}"],
+              "path": ["bot", "orders", "{{orderNo}}", "complete"]
+            }
+          }
+        },
+        {
+          "name": "Case 4: POST /bot/orders/:orderNo/fail - Report Failure (TRANSIENT vs PERMANENT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"botId\": \"BOT-WORKER-01\",\n  \"errorType\": \"PERMANENT\",\n  \"errorCode\": \"INVALID_UID\",\n  \"errorMessage\": \"Player UID not found on server\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bot/orders/{{orderNo}}/fail",
+              "host": ["{{baseUrl}}"],
+              "path": ["bot", "orders", "{{orderNo}}", "fail"]
+            }
+          }
+        },
+        {
+          "name": "Case 4: POST /orders/:orderNo/retry-uid - Correct UID & Re-queue",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newPlayerUid\": \"CORRECTED-UID-888999\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderNo}}/retry-uid",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderNo}}", "retry-uid"]
+            }
+          }
+        },
+        {
+          "name": "Case 3: POST /webhooks/bank-payment - Bank Payment Confirmation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"BANK-EVT-{{$timestamp}}\",\n  \"orderNo\": \"{{orderNo}}\",\n  \"amount\": 150.00,\n  \"transactionRef\": \"TX-BANK-{{$timestamp}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/bank-payment",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhooks", "bank-payment"]
+            }
+          }
+        },
+        {
+          "name": "Case 1 & 5: POST /admin/run-recovery-cycle - Trigger Recovery Cycle",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/run-recovery-cycle",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "run-recovery-cycle"]
+            }
+          }
+        },
+        {
+          "name": "GET /admin/alerts - View System Alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/alerts",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "alerts"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
